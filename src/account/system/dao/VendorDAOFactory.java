@@ -1,7 +1,11 @@
 package account.system.dao;
 
 public class VendorDAOFactory {
+    public static VendorDAO vendorDAO = null;
     public static VendorDAO getInstance() {
-        return new VendorDAOImpl();
+        if(vendorDAO == null) {
+            vendorDAO = new VendorDAOImpl();
+        }
+        return vendorDAO;
     }
 }
