@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 public class AccountSystem {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            final DesktopWindow window = new DesktopWindow("Account System");
+            final DesktopWindow window = new DesktopWindow("Account System NITKKR");
             window.initialize();
         });
     }
