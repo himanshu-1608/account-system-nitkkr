@@ -2,6 +2,8 @@ package account.system.ui;
 
 import account.system.dao.DbService;
 import account.system.model.VendorBeneficiary;
+import account.system.utils.DbUtils;
+import account.system.utils.UiUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -20,10 +22,8 @@ public class DesktopWindow extends JFrame {
         super(text);
     }
     public void initialize() {
-        String dbFilePath = getDbFilePath();
-        dbService.initDb(dbFilePath);
+        dbService.initDb(dbService.getDbFilePath());
         ArrayList<String> vendorBeneficiaryList = dbService.getAllVendorBeneficiaryNames();
-        System.out.println("VB List Size: " + vendorBeneficiaryList.size());
 //        Border lblBorders = BorderFactory.createLineBorder(Color.pink);
         
         JLabel lblVendorBeneficiary = new JLabel("Vendor/Beneficiary");
@@ -50,7 +50,8 @@ public class DesktopWindow extends JFrame {
             int indexBeneficiary = dropdownBeneficiaries.getSelectedIndex();
             String vendorName = vendorBeneficiaryList.get(indexBeneficiary);
             VendorBeneficiary v = dbService.getVendorBeneficiaryByName(vendorName);
-            System.out.println("Service Start Date: " + v.getPolicyDate());
+            JScrollPane sp = UiUtils.createTableFromVBData(v, new int[]{20,140,1000,55});
+            add(sp);
         });
         
         add(lblVendorBeneficiary);
@@ -62,33 +63,5 @@ public class DesktopWindow extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-    }
-    private String getDbFilePath() {
-        String dbPersistentPath = "AccountSystemNITKKR/DB_FILE_PATH";
-        File dbPersistentFile = new File(System.getProperty("user.home"), dbPersistentPath);
-        if(!dbPersistentFile.getParentFile().exists()) {
-            dbPersistentFile.getParentFile().mkdir();
-        }
-        if(!dbPersistentFile.exists()) {
-            String inputDbPath = JOptionPane.showInputDialog(null,"Provide CSV File Path");
-            try (FileWriter fw = new FileWriter(dbPersistentFile)) {
-                fw.write(inputDbPath);
-                fw.close();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null,"Could Not Store Database Path\nError Code: FILE001","File Error", JOptionPane.ERROR_MESSAGE);
-                dbPersistentFile.delete();
-                System.exit(0);
-            }
-        }
-        String dbCsvFilePath;
-        try(Scanner reader = new Scanner(dbPersistentFile)) {
-            dbCsvFilePath = reader.nextLine();
-            reader.close();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,"Some Unexpected Error Occured\nError Code: FILE002","Internal Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-            dbCsvFilePath = "";
-        }
-        return dbCsvFilePath;
     }
 }

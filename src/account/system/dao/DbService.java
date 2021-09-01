@@ -18,4 +18,8 @@ public class DbService {
     public void initDb(String dbPath) {
         DbUtils.init(dbPath);
     }
+    
+    public String getDbFilePath() {
+        return DbUtils.getDbFilePath();
+    }
 }
